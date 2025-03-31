@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Time Tracker for ERPNext</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f7fa;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 20px;
+        }
+        h1 {
+            color: #2e86de;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        input, textarea, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        textarea {
+            height: 80px;
+            resize: vertical;
+        }
+        .btn {
+            background-color: #2e86de;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s;
+        }
+        .btn:hover {
+            background-color: #1a73e8;
+        }
+        .btn i {
+            margin-right: 8px;
+        }
+        .btn-stop {
+            background-color: #ee5253;
+        }
+        .btn-stop:hover {
+            background-color: #eb3b5b;
+        }
+        .timer-display {
+            font-size: 36px;
+            text-align: center;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            color: #2e86de;
+        }
+        .status {
+            text-align: center;
+            margin: 10px 0;
+            font-weight: 600;
+        }
+        .active {
+            color: #27ae60;
+        }
+        .inactive {
+            color: #7f8c8d;
+        }
+        .screenshots {
+            margin-top: 30px;
+        }
+        .screenshots h2 {
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+        .screenshot-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        .screenshot-item {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .screenshot-item img {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+        }
+        .screenshot-info {
+            padding: 8px;
+            font-size: 12px;
+            background: #f9f9f9;
+        }
+        .settings-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: #7f8c8d;
+        }
+        .settings-panel {
+            display: none;
+            margin-top: 20px;
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 4px;
+            border: 1px solid #eee;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button class="settings-btn" id="settingsBtn"><i class="fas fa-cog"></i></button>
+        
+        <h1>Time Tracker</h1>
+        
+        <div class="settings-panel" id="settingsPanel">
+            <div class="form-group">
+                <label for="erpnextUrl">ERPNext Instance URL</label>
+                <input type="text" id="erpnextUrl" placeholder="https://your-erpnext-instance.com">
+            </div>
+            <div class="form-group">
+                <label for="apiKey">API Key</label>
+                <input type="password" id="apiKey" placeholder="Your API Key">
+            </div>
+            <div class="form-group">
+                <label for="apiSecret">API Secret</label>
+                <input type="password" id="apiSecret" placeholder="Your API Secret">
+            </div>
+            <button class="btn" id="saveSettings"><i class="fas fa-save"></i> Save Settings</button>
+        </div>
+        
+        <div class="form-group">
+            <label for="project">Project</label>
+            <select id="project">
+                <option value="">Select Project</option>
+                <!-- Projects will be loaded dynamically -->
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="task">Task</label>
+            <select id="task">
+                <option value="">Select Task</option>
+                <!-- Tasks will be loaded dynamically -->
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="memo">Memo</label>
+            <textarea id="memo" placeholder="What are you working on?"></textarea>
+        </div>
+        
+        <div class="timer-display" id="timer">00:00:00</div>
+        
+        <div class="status inactive" id="status">Not Tracking</div>
+        
+        <div class="actions">
+            <button class="btn" id="startBtn"><i class="fas fa-play"></i> Start Tracking</button>
+            <button class="btn btn-stop" id="stopBtn" disabled><i class="fas fa-stop"></i> Stop Tracking</button>
+        </div>
+        
+        <div class="screenshots" id="screenshotsSection" style="display: none;">
+            <h2>Screenshots</h2>
+            <div class="screenshot-grid" id="screenshotGrid">
+                <!-- Screenshots will be added here -->
+            </div>
+        </div>
+    </div>
+
+    <script src="renderer.js"></script>
+</body>
+</html>
