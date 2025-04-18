@@ -9,7 +9,7 @@ const { captureScreenshot } = require('./screenshot');
 app.disableHardwareAcceleration();
 // Initialize store
 const store = new Store();
-
+console.log('Electron Store Path:', store.path);
 let mainWindow;
 
 function createWindow() {
@@ -46,6 +46,8 @@ app.on('activate', function () {
     if (mainWindow === null) createWindow();
 });
 
+
+
 // IPC Handlers
 ipcMain.handle('get-projects', async () => {
     const url = store.get('erpnextUrl');
@@ -57,8 +59,10 @@ ipcMain.handle('get-projects', async () => {
     }
 
     try {
+        const filters = encodeURIComponent(JSON.stringify([["status","=","Open" ]]));
+        const fields = encodeURIComponent(JSON.stringify(["name","project_name","status"]));
         const response = await frappeRequest({
-            url: `${url}/api/resource/Project`,
+            url: `${url}/api/resource/Project?filters=${filters}&fields=${fields}`,
             method: 'GET',
             apiKey,
             apiSecret
@@ -79,12 +83,16 @@ ipcMain.handle('get-tasks', async (event, project) => {
     }
 
     try {
+        const filters = encodeURIComponent(JSON.stringify([["project","=",project]]));
+        const fields = encodeURIComponent(JSON.stringify(["name","subject","status"]));
         const response = await frappeRequest({
-            url: `${url}/api/resource/Task?filters=[["project","=","${project}"]]`,
+            // url: `${url}/api/resource/Task?filters=[["project","=","${project}"]]`,
+            url: `${url}/api/resource/Task?filters=${filters}&fields=${fields}`,
             method: 'GET',
             apiKey,
             apiSecret
         });
+        // console.log("Task Response:", response.data);
         return response.data;
     } catch (error) {
         return { error: error.message };
@@ -145,6 +153,7 @@ ipcMain.handle('submit-timesheet', async (event, { project, task, memo, duration
                 }]
             }
         });
+        console.log()
 
         const timesheetName = timesheetResponse.data.name;
 
